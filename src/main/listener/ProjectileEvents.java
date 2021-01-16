@@ -92,12 +92,11 @@ public class ProjectileEvents implements Listener{
 						
 						int frozen = 0;
 						
-						for(Entity et : p.getNearbyEntities(r, r, r)) {
-							if(et instanceof Monster && !et.isInWater()) {
-								
-								((Monster) et).addPotionEffect(potioneffect_freeze);
-								BoundingBox bb = et.getBoundingBox();
-								Location l = et.getLocation();
+						for(Entity entity : p.getNearbyEntities(r, r, r)) {
+							if(entity instanceof Monster && !entity.isInWater()) {
+								((Monster) entity).addPotionEffect(potioneffect_freeze);
+								BoundingBox bb = entity.getBoundingBox();
+								Location l = entity.getLocation();
 								for(int x=l.getBlockX() - 1; x <= bb.getMaxX() + 0.5; x++) {
 									for(int z=l.getBlockZ() - 1; z <= bb.getMaxZ() + 0.5; z++) {
 										for(int y=l.getBlockY() - 1; y <= bb.getMaxY() + 0.5; y++) {

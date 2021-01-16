@@ -30,8 +30,8 @@ import main.Main;
 
 public class EggThrowListener implements Listener{
 	
-	public static Map<UUID, List> spider_blocks = new HashMap<>();
-	public static Map<UUID, List> spider_entitys = new HashMap<>();
+	public static Map<UUID, List<Block>> spider_blocks = new HashMap<>();
+	public static Map<UUID, List<Block>> spider_entitys = new HashMap<>();
 	
 	List<EntityType> friendlymobs = Arrays.asList(
 		EntityType.SHEEP, EntityType.COW, EntityType.PIG, EntityType.CAT, EntityType.CHICKEN, 
@@ -88,11 +88,11 @@ public class EggThrowListener implements Listener{
 					}
 					int prisoned = 0;
 					
-					for(Entity et : p.getNearbyEntities(r, r, r)) {
-						if(et.getType().isAlive() && !et.equals(e.getPlayer()) && !et.isInWater() && !et.isInsideVehicle()) {
+					for(Entity entity : p.getNearbyEntities(r, r, r)) {
+						if(entity.getType().isAlive() && !entity.equals(e.getPlayer()) && !entity.isInWater() && !entity.isInsideVehicle()) {
 							
-							BoundingBox bb = et.getBoundingBox();
-							Location l = et.getLocation();
+							BoundingBox bb = entity.getBoundingBox();
+							Location l = entity.getLocation();
 							
 							double maxy = Math.floor(bb.getMaxY()) + 1;
 							
@@ -189,10 +189,10 @@ public class EggThrowListener implements Listener{
 					List<Block> blocks3 = new ArrayList<Block>();
 					List<Entity> targetlist = new ArrayList<>();
 					
-					for(Entity et : p.getNearbyEntities(r, r, r)) {
-						if(et instanceof Monster && !et.isInWater()) {
-							BoundingBox bb = et.getBoundingBox();
-							Location l = et.getLocation();
+					for(Entity entity : p.getNearbyEntities(r, r, r)) {
+						if(entity instanceof Monster && !entity.isInWater()) {
+							BoundingBox bb = entity.getBoundingBox();
+							Location l = entity.getLocation();
 							for(int x=l.getBlockX(); x <= bb.getMaxX(); x++) {
 								for(int z=l.getBlockZ(); z <= bb.getMaxZ(); z++) {
 									for(int y=l.getBlockY(); y <= bb.getMaxY(); y++) {
@@ -205,7 +205,7 @@ public class EggThrowListener implements Listener{
 									}
 								}	
 							}
-							targetlist.add(et);
+							targetlist.add(entity);
 						}
 					}
 					spider_blocks.put(p.getUniqueId(), blocks3);
