@@ -1,0 +1,19 @@
+name: AdvancedHardcore
+version: 0.9
+author: Jonosa
+main: main.Main
+api-version: 1.16
+
+commands:
+  replacebiome:
+    description: Ersetzt ein Biom
+  biomeliste:
+    description: Liste aller Biome (1.6.4)
+  fly:
+    description: Fliegen umschalten
+  speed:
+    description: Setzt Flug und Geh Geschwindigkeit
+  getitem:
+    description: Gibt dir wichtige Tools
+  heal:
+    description: Heil einen Spieler
