@@ -39,7 +39,7 @@ public class ProjectileEvents implements Listener{
 	
 	PotionEffect potioneffect_freeze = new PotionEffect(PotionEffectType.SLOW, 600, 9);
 	
-	public static Map<UUID, List> ice_blocks = new HashMap<>();
+	public static Map<UUID, List<Block>> ice_blocks = new HashMap<>();
 	
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent e) {
@@ -174,141 +174,117 @@ public class ProjectileEvents implements Listener{
 		}
 	}
 	
+	private String getNamespace(ItemStack item) {
+		if(item.equals(GetItem.bow_bomb)) {
+			return "xbow_bomb";
+		} else if(item.equals(GetItem.bow_rocket)) {
+			return "xbow_rocket";
+		} else if(item.equals(GetItem.bow_nuklear)) {
+			return "xbow_nuklear";
+		} else {
+			return "xbow";
+		}
+	}
+	
+	private String getEggNamespace(String displayname) {
+		if(displayname.equals("§c§lFeuerbombe")) {
+			return "firebomb";
+		}
+		else if(displayname.equals("§7§lMobfalle")) {
+				return "mobtrap";
+		}
+		else if(displayname.equals("§6§lImplosion")) {
+			return "imploding";
+		}
+		else if(displayname.equals("§e§lDruckwelle")) {
+			return "exploding";
+		}
+		else if(displayname.equals("§5§lSpinnenfalle")) {
+			return "spidertrap";
+		}
+		return "";
+	}
+	
+	private boolean isCorrectEntityType(EntityType entityType) {
+		return entityType.equals(EntityType.ARROW) || entityType.equals(EntityType.FIREWORK) 
+		|| entityType.equals(EntityType.EGG) || entityType.equals(EntityType.SNOWBALL) 
+		|| entityType.equals(EntityType.SPLASH_POTION);
+	}
+
+	private String doTheWork(ItemStack item, EntityType entityType, ProjectileLaunchEvent event, LivingEntity player) {
+		String displayname = item.getItemMeta().getLocalizedName();
+		String namespace = null;
+		
+		if(displayname.equals("§cExplosiverBogen")){
+			namespace = getNamespace(item);
+		}
+		else if(entityType.equals(EntityType.FIREWORK)) {
+			if(item.getType().equals(Material.CROSSBOW)) {
+				namespace = "firework";
+			}
+		}
+		else if(event.getEntityType().equals(EntityType.EGG)) {
+			namespace = getEggNamespace(displayname);
+		}
+		else if(entityType.equals(EntityType.SNOWBALL)) {
+			if(displayname.equals("§b§lEisbombe")) {
+					namespace = "icebomb";
+			}
+		}
+		else if(entityType.equals(EntityType.SPLASH_POTION)) {
+			if(displayname.equals("§c§lMolotowcocktail")) {
+				Vector vec = event.getEntity().getVelocity();
+				vec.multiply(3);
+				event.getEntity().setVelocity(vec);
+				namespace = "firebomb";
+			}
+			else if(displayname.equals("§3§lWasserbombe")) {
+				if(player.getWorld().getEnvironment().equals(Environment.NETHER)) {
+					//event.setCancelled();
+					// No cancel other plugins might wanna receive that event
+					player.sendMessage("§cDu kannst die Wasserbombe im Nether nicht benutzen!");
+					return "";
+				}
+				Vector vec = event.getEntity().getVelocity();
+				vec.multiply(3);
+				event.getEntity().setVelocity(vec);
+				namespace = "waterbomb";
+			}
+		}
+		else if(item.getType().equals(Material.TNT) && item.getType().equals(Material.BOW)) {
+			namespace = "tnt";
+			item.setAmount(item.getAmount() - 1);
+		}
+		return namespace;
+	}
+	
+	
 	@EventHandler
-	public void onProjectileLaunch(ProjectileLaunchEvent e) {
-		if (e.getEntity().getShooter() instanceof Player || e.getEntity().getShooter() instanceof LivingEntity) {
-			if(	e.getEntityType().equals(EntityType.ARROW) 
-				|| e.getEntityType().equals(EntityType.FIREWORK) 
-				|| e.getEntityType().equals(EntityType.EGG) 
-				|| e.getEntityType().equals(EntityType.SNOWBALL) 
-				|| e.getEntityType().equals(EntityType.SPLASH_POTION)) {
+	public void onProjectileLaunch(ProjectileLaunchEvent event) {
+		if (event.getEntity().getShooter() instanceof Player || event.getEntity().getShooter() instanceof LivingEntity) {
+			if(isCorrectEntityType(event.getEntityType())) {
 				
-				LivingEntity p = (LivingEntity) e.getEntity().getShooter();
-				ItemStack mhi = p.getEquipment().getItemInMainHand();
-				ItemStack ohi = p.getEquipment().getItemInOffHand();
+				LivingEntity player = (LivingEntity) event.getEntity().getShooter();
+				ItemStack itemInMainHand = player.getEquipment().getItemInMainHand();
+				ItemStack itemInOffHand = player.getEquipment().getItemInOffHand();
 				String namespace = null;
 				
-				EntityType entitytype = e.getEntityType();
+				EntityType entitytype = event.getEntityType();
 				
-				if(mhi.hasItemMeta()) {
-					String displayname = mhi.getItemMeta().getLocalizedName();
-					
-					if(displayname.equals("§cExplosiverBogen")){
-						if(ohi.equals(GetItem.bow_bomb)) 
-							namespace = "xbow_bomb";
-						else if(ohi.equals(GetItem.bow_rocket))
-							namespace = "xbow_rocket";
-						else if(ohi.equals(GetItem.bow_nuklear)) 
-							namespace = "xbow_nuklear";
-						else
-							namespace = "xbow";
-					}
-					else if(entitytype.equals(EntityType.FIREWORK)) {
-						if(mhi.getType().equals(Material.CROSSBOW)) {
-							namespace = "firework";
-						}
-					}
-					else if(e.getEntityType().equals(EntityType.EGG)) {
-						if(displayname.equals("§c§lFeuerbombe")) {
-							namespace = "firebomb";
-						}
- 						else if(displayname.equals("§7§lMobfalle")) {
-							namespace = "mobtrap";
-						}
-						else if(displayname.equals("§6§lImplosion")) {
-							namespace = "imploding";
-						}
-						else if(displayname.equals("§e§lDruckwelle")) {
-							namespace = "exploding";
-						}
-						else if(displayname.equals("§5§lSpinnenfalle")) {
-							namespace = "spidertrap";
-						}
-					}
-					else if(entitytype.equals(EntityType.SNOWBALL)) {
-						if(displayname.equals("§b§lEisbombe"))
-								namespace = "icebomb";
-					}
-					else if(entitytype.equals(EntityType.SPLASH_POTION)) {
-						if(displayname.equals("§c§lMolotowcocktail")) {
-							Vector vec = e.getEntity().getVelocity();
-							vec.multiply(3);
-							e.getEntity().setVelocity(vec);
-							namespace = "firebomb";
-						}
-						else if(displayname.equals("§3§lWasserbombe")) {
-							if(p.getWorld().getEnvironment().equals(Environment.NETHER)) {
-								e.setCancelled(true);
-								p.sendMessage("§cDu kannst die Wasserbombe im Nether nicht benutzen!");
-							}
-							Vector vec = e.getEntity().getVelocity();
-							vec.multiply(3);
-							e.getEntity().setVelocity(vec);
-							namespace = "waterbomb";
-						}
-					}
-					else if(ohi.getType().equals(Material.TNT) && mhi.getType().equals(Material.BOW)) {
-						namespace = "tnt";
-						ohi.setAmount(ohi.getAmount() - 1);
-					}
-					
-					
+				if(itemInMainHand.hasItemMeta()) {
+					namespace = doTheWork(itemInMainHand, entitytype, event, player);
 				}
-				if(ohi.hasItemMeta()) {
-					String displayname = ohi.getItemMeta().getLocalizedName();
-					
-					if(e.getEntityType().equals(EntityType.EGG)) {
-						if(displayname.equals("§c§lFeuerbombe")) {
-							namespace = "firebomb";
-						}
- 						else if(displayname.equals("§7§lMobfalle")) {
-							namespace = "mobtrap";
-						}
-						else if(displayname.equals("§6§lImplosion")) {
-							namespace = "imploding";
-						}
-						else if(displayname.equals("§e§lDruckwelle")) {
-							namespace = "exploding";
-						}
-						else if(displayname.equals("§5§lSpinnenfalle")) {
-							namespace = "spidertrap";
-						}
-					}
-					else if(entitytype.equals(EntityType.SNOWBALL)) {
-						if(displayname.equals("§b§lEisbombe"))
-								namespace = "icebomb";
-					}
-					else if(entitytype.equals(EntityType.SPLASH_POTION)) {
-						if(displayname.equals("§c§lMolotowcocktail")) {
-							Vector vec = e.getEntity().getVelocity();
-							vec.multiply(3);
-							e.getEntity().setVelocity(vec);
-							namespace = "firebomb";
-						}
-						else if(displayname.equals("§3§lWasserbombe")) {
-							if(p.getWorld().getEnvironment().equals(Environment.NETHER)) {
-								e.setCancelled(true);
-								p.sendMessage("§cDu kannst die Wasserbombe im Nether nicht benutzen!");
-							}
-							Vector vec = e.getEntity().getVelocity();
-							vec.multiply(3);
-							e.getEntity().setVelocity(vec);
-							namespace = "waterbomb";
-						}
-					}
-					else if(ohi.getType().equals(Material.TNT) && !mhi.equals(GetItem.superbow) && mhi.getType().equals(Material.BOW)) {
-						namespace = "tnt";
-						ohi.setAmount(ohi.getAmount() - 1);
-					}
+				if(itemInOffHand.hasItemMeta()) {
+					namespace = doTheWork(itemInOffHand, entitytype, event, player);
 				}
-				else if(ohi.getType().equals(Material.TNT) && !mhi.equals(GetItem.superbow) && mhi.getType().equals(Material.BOW)) {
+				else if(itemInOffHand.getType().equals(Material.TNT) && !itemInMainHand.equals(GetItem.superbow) && itemInMainHand.getType().equals(Material.BOW)) {
 					namespace = "tnt";
-					ohi.setAmount(ohi.getAmount() - 1);
-					
+					itemInOffHand.setAmount(itemInOffHand.getAmount() - 1);
 				}
 				
-				if(namespace != null)
-					e.getEntity().setMetadata("projectile_data", new FixedMetadataValue(Main.main, namespace));
+				if(namespace != null) {
+					event.getEntity().setMetadata("projectile_data", new FixedMetadataValue(Main.main, namespace));
+				}
 			}
 		}
 	}
