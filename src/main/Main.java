@@ -5,13 +5,11 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Spider;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import main.commands.Biomelist;
-import main.commands.Blockdata;
 import main.commands.Fly;
 import main.commands.GetItem;
 import main.commands.Heal;
@@ -72,30 +70,24 @@ public class Main extends JavaPlugin{
 		this.saveConfig();
 		
 		
-		ProjectileEvents.ice_blocks.forEach((UUID uuid, List list) -> {
-			List<Block> rlist = list;
-			for(Block b : rlist) {
+		ProjectileEvents.ice_blocks.forEach((UUID uuid, List<Block> list) -> {
+			for(Block b : list) {
 				if(b.getType().equals(Material.ICE) || b.getType().equals(Material.WATER)) 
 				b.setType(Material.AIR);
 			}
-			//ProjectileEvents.ice_blocks.remove(uuid);
 		});
 		
-		EggThrowListener.spider_blocks.forEach((UUID uuid, List list) -> {
-			List<Block> rlist = list;
-			for(Block b : rlist) {
+		EggThrowListener.spider_blocks.forEach((UUID uuid, List<Block> list) -> {
+			for(Block b : list) {
 				if(b.getType().equals(Material.COBWEB)) 
 				b.setType(Material.AIR);
 			}
-			//EggThrowListener.spider_blocks.remove(uuid);
 		});
 		
-		EggThrowListener.spider_entitys.forEach((UUID uuid, List list) -> {
-			List<Spider> rlist = list;
-			for(Spider s : rlist) {
+		EggThrowListener.spider_entitys.forEach((UUID uuid, List<Spider> list) -> {
+			for(Spider s : list) {
 				s.remove();
 			}
-			//EggThrowListener.spider_entitys.remove(uuid);
 		});
 	}
 }

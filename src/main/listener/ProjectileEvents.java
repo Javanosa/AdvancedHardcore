@@ -39,7 +39,7 @@ public class ProjectileEvents implements Listener{
 	
 	PotionEffect potioneffect_freeze = new PotionEffect(PotionEffectType.SLOW, 600, 9);
 	
-	public static Map<UUID, List> ice_blocks = new HashMap<>();
+	public static Map<UUID, List<Block>> ice_blocks = new HashMap<>();
 	
 	@EventHandler
 	public void onProjectileHit(ProjectileHitEvent e) {

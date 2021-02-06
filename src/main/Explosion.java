@@ -9,15 +9,8 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import main.listener.Events;
@@ -82,6 +75,8 @@ public class Explosion {
 					case BLUE_ICE:
 						nm = Material.WATER;
 						break;
+				default:
+					break;
 				}
 				if(nm!=null)
 				b.setType(nm);
@@ -118,6 +113,8 @@ public class Explosion {
 							nm = Material.ICE;
 						}
 						break;
+				default:
+					break;
 				}
 				if(nm!=null)
 				b.setType(nm);
@@ -136,6 +133,8 @@ public class Explosion {
 						nm = Material.AIR;
 						fire = true;
 						break;
+				default:
+					break;
 					
 				}
 				if(nm!=null)
@@ -152,7 +151,6 @@ public class Explosion {
 		
 		
 		Material i;
-		Byte j;
 		Location p;
 		BlockData bd;
 		
@@ -196,8 +194,6 @@ public class Explosion {
 		//ver = 1;
 		
 		int dummy = 0;
-		
-		Inventory inv = null;
 		
 		//long starttime = System.nanoTime();
 		for(int v=0; v < blocks.size(); v+=ver) {

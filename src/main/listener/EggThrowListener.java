@@ -30,8 +30,8 @@ import main.Main;
 
 public class EggThrowListener implements Listener{
 	
-	public static Map<UUID, List> spider_blocks = new HashMap<>();
-	public static Map<UUID, List> spider_entitys = new HashMap<>();
+	public static Map<UUID, List<Block>> spider_blocks = new HashMap<>();
+	public static Map<UUID, List<Spider>> spider_entitys = new HashMap<>();
 	
 	List<EntityType> friendlymobs = Arrays.asList(
 		EntityType.SHEEP, EntityType.COW, EntityType.PIG, EntityType.CAT, EntityType.CHICKEN, 

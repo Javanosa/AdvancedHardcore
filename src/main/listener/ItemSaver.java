@@ -2,11 +2,8 @@ package main.listener;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,8 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
-import org.bukkit.event.player.PlayerItemBreakEvent;
-import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,28 +25,6 @@ public class ItemSaver implements Listener {
 	
 	
 	public static List<Inventory> trash_invs = new ArrayList<>();
-	
-	public static void saveTrashItems() {
-		
-		ConfigurationSection section = trashitems.createSection("TrashItems");
-		int offset = 0;
-		for(int iv = 0; iv < trash_invs.size(); iv++) {
-			Main.main.getLogger().warning(iv +  " iv");
-			for(int i = 0; i < 54; i++) {
-				section.set((offset+i)+"", trash_invs.get(iv).getItem(i));
-				Main.main.getLogger().warning(i +  " i §dset" + (offset+i));
-				
-			}
-			offset=offset+54;
-		}
-		
-		try {
-			if(!file.exists()) {
-				file.createNewFile();
-			}
-			trashitems.save(file);
-		} catch (IOException e) {}
-	}
 	
 	static File file = new File(Main.main.getDataFolder(), "trashitems.yml");
 	static FileConfiguration trashitems = YamlConfiguration.loadConfiguration(file);
@@ -98,6 +71,30 @@ public class ItemSaver implements Listener {
 			
 		}
 	}
+	
+	
+	public static void saveTrashItems() {
+		
+		ConfigurationSection section = trashitems.createSection("TrashItems");
+		int offset = 0;
+		for(int iv = 0; iv < trash_invs.size(); iv++) {
+			Main.main.getLogger().warning(iv +  " iv");
+			for(int i = 0; i < 54; i++) {
+				section.set((offset+i)+"", trash_invs.get(iv).getItem(i));
+				Main.main.getLogger().warning(i +  " i §dset" + (offset+i));
+				
+			}
+			offset=offset+54;
+		}
+		
+		try {
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			trashitems.save(file);
+		} catch (IOException e) {}
+	}
+	
 	
 	public static void saveItem(ItemStack itemstack) {
 		for(int i=0; i < trash_invs.size(); i++) {
