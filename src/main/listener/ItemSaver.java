@@ -134,15 +134,45 @@ public class ItemSaver implements Listener {
 		}
 	}
 	
-	@EventHandler(ignoreCancelled = false)
-	public void onItemDeath(EntityDamageEvent e) {
-		//Bukkit.broadcastMessage(e.getEntityType()+" type");
+	
+	int currentid = 0;
+	
+	//List<Integer> killeditems = new ArrayList<>();
+	Boolean itemalive = true;
+	
+	@EventHandler(ignoreCancelled = true)
+	public void onItemDamage(EntityDamageEvent e) {
 		if(e.getEntityType().equals(EntityType.DROPPED_ITEM)) {
-			//saveItem(((Item) e.getEntity()).getItemStack());
 			
-			Bukkit.broadcastMessage("§eItemDamage §5"+e.getEntity().isDead());
+			Item item = (Item) e.getEntity();
+			
+			int entityid = item.getEntityId();
+			
+			if(/*killeditems.contains(entityid)*/currentid != entityid) {
+				//killeditems.add(entityid);
+				currentid = entityid;
+				
+				
+			}
+			else {
+				itemalive = true;
+			}
+			
+			
+			Bukkit.getScheduler().runTask(Main.main, new Runnable() {
+				@Override
+				public void run() {
+					if(item.isDead() && itemalive) {
+						itemalive = false;
+						saveItem(item.getItemStack());
+						Bukkit.broadcastMessage("§eItemDamage §6§l"+item.isDead());
+					}
+				}
+				
+			});
 		}
 	}
+	
 	
 	/*@EventHandler
 	public void onPlayerItemDamage(PlayerItemDamageEvent e) {
