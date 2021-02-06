@@ -27,28 +27,36 @@ public class ItemSaver implements Listener {
 	
 	public static void saveTrashItems() {
 		
-		ConfigurationSection section = Main.main.getConfig().getConfigurationSection("TrashItems");
-		if(section!=null) {
-			for(int iv = 0; iv < trash_invs.size(); iv++) {
-				for(int i = 0; i < 54; i++) {
-					section.set((iv*i)+"", trash_invs.get(iv).getItem(i));
-				}
+		
+		ConfigurationSection section = Main.main.getConfig().createSection("TrashItems");
+		int offset = 0;
+		for(int iv = 0; iv < trash_invs.size(); iv++) {
+			Main.main.getLogger().warning(iv +  " iv");
+			for(int i = 0; i < 54; i++) {
+				section.set((offset+i)+"", trash_invs.get(iv).getItem(i));
+				Main.main.getLogger().warning(i +  " i §dset" + (offset+i));
+				
 			}
-		}
-		else {
-			Main.main.getConfig().createSection("TrashItems");
+			offset=offset+54;
 		}
 	}
 	
 	static {
 		ConfigurationSection section = Main.main.getConfig().getConfigurationSection("TrashItems");
+		
+		if(section==null) {
+			section = Main.main.getConfig().createSection("TrashItems");
+		}
+		
 		if(!section.getKeys(false).isEmpty()) {
 			int keys = section.getKeys(false).size();
 			
 			int inv_keys = (int) Math.ceil(keys / 54);
-			for(int iv = 0; iv < keys; iv=+54) {
-				Main.main.getLogger().info(iv +  "Inventar");
-				Inventory inv = Bukkit.createInventory(null, 54, ChatColor.BLUE+"Mülleimer "+ChatColor.DARK_GRAY+"- Seite "+ (iv/54)+1);
+			
+			Main.main.getLogger().info(inv_keys +  " inv_keys");
+			for(int iv = 0; iv < keys; iv=iv+54) {
+				Main.main.getLogger().info(iv +  " iv");
+				Inventory inv = Bukkit.createInventory(null, 54, ChatColor.BLUE+"Mülleimer "+ChatColor.DARK_GRAY+"- Seite "+ Math.round(Math.ceil(iv/54)+1));
 				for(int i = 0; i < 54; i++) {
 					Main.main.getLogger().info(i +  "Item");
 					
@@ -56,8 +64,9 @@ public class ItemSaver implements Listener {
 					inv.setItem(i, itemstack);
 				}
 				trash_invs.add(inv);
+				
 			}
-			Main.main.getLogger().info("Loaded TrashItems! " + keys + "/" + inv_keys);
+			//Main.main.getLogger().info("Loaded TrashItems! " + keys + "/" + inv_keys);
 			
 		}
 		else {
@@ -78,7 +87,7 @@ public class ItemSaver implements Listener {
 			}
 			else {
 				if(i+1 == trash_invs.size()) {
-					Inventory inv = Bukkit.createInventory(null, 54, "§1Mülleimer §8- Seite "+(i+1));
+					Inventory inv = Bukkit.createInventory(null, 54, ChatColor.BLUE+"Mülleimer "+ChatColor.DARK_GRAY+"- Seite "+(i+2));
 					trash_invs.add(inv);
 				}
 			}
@@ -93,7 +102,7 @@ public class ItemSaver implements Listener {
 			"§e-- §7" + e.getEntity().getPickupDelay()
 			+ " / " + e.getEntity().getLastDamageCause()
 			+ " / " + e.getEntity().getOwner()
-			+ " / " + e.getEntity().getThrower() + "\nItemDespawn §e--");
+			+ " / " + e.getEntity().getThrower() + "\nItemDespawn §e--" + e.isCancelled() + "c");
 	}
 	
 	@EventHandler(ignoreCancelled = false)

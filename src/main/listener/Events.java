@@ -181,6 +181,8 @@ public class Events implements Listener {
 					|| material.equals(Material.GRASS_BLOCK)
 					|| material.equals(Material.PODZOL) ) {
 				block.setType(itemstack);
+				e.setCancelled(true);
+				item.remove();
 				Main.main.getLogger().info("§aPlaced " + itemstack.name() + " §7in " + loc.getWorld().getName()
 				+ " at " + loc.getBlockX() + " " + loc.getBlockY() + " " +  loc.getBlockZ());
 				}

@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import main.Explosion;
 import main.Main;
 import main.listener.ItemSaver;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class toggleMethod implements CommandExecutor{
 	
@@ -30,13 +32,15 @@ public class toggleMethod implements CommandExecutor{
 						p.sendMessage("§eUseold = 1, benutze alte Methode Y+1");
 					}
 					
-					int page = 0;
-					if(args.length == 1)
+					int page = 1;
+					if(args.length == 1) {
 						page = Integer.valueOf(args[0]);
+						if(page > ItemSaver.trash_invs.size() || page < 1)
+							page = 1;
+					}
 					
-					if(page < ItemSaver.trash_invs.size())
-						p.openInventory(ItemSaver.trash_invs.get(page));
-					p.sendMessage(ItemSaver.trash_invs.size()+"");
+					p.openInventory(ItemSaver.trash_invs.get(page - 1));
+					p.spigot().sendMessage(ChatMessageType.SYSTEM, new TextComponent("§bSeite "+page+" / "+ItemSaver.trash_invs.size()));
 				}
 			}
 		
