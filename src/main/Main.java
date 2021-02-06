@@ -17,6 +17,7 @@ import main.commands.GetItem;
 import main.commands.Heal;
 import main.commands.ReplaceBiome;
 import main.commands.Speed;
+import main.commands.Trash;
 import main.commands.toggleMethod;
 import main.listener.EggThrowListener;
 import main.listener.Events;
@@ -44,7 +45,6 @@ public class Main extends JavaPlugin{
 	    pm.registerEvents(new EggThrowListener(), this);
 	    pm.registerEvents(new ProjectileEvents(), this);
 	    pm.registerEvents(new SpiderController(), this);
-	    
 	    pm.registerEvents(new ItemSaver(), this);
 	    
 	    this.getCommand("replacebiome").setExecutor(new ReplaceBiome());
@@ -55,7 +55,7 @@ public class Main extends JavaPlugin{
 		this.getCommand("heal").setExecutor(new Heal());
 		
 		this.getCommand("tglmethod").setExecutor(new toggleMethod());
-		//this.getCommand("blockdata").setExecutor(new Blockdata());
+		this.getCommand("trash").setExecutor(new Trash());
 		
 		Recipes.register_recipes();
 		

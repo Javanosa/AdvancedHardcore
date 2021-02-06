@@ -31,16 +31,6 @@ public class toggleMethod implements CommandExecutor{
 						Explosion.useold = 1;
 						p.sendMessage("§eUseold = 1, benutze alte Methode Y+1");
 					}
-					
-					int page = 1;
-					if(args.length == 1) {
-						page = Integer.valueOf(args[0]);
-						if(page > ItemSaver.trash_invs.size() || page < 1)
-							page = 1;
-					}
-					
-					p.openInventory(ItemSaver.trash_invs.get(page - 1));
-					p.spigot().sendMessage(ChatMessageType.SYSTEM, new TextComponent("§bSeite "+page+" / "+ItemSaver.trash_invs.size()));
 				}
 			}
 		

@@ -7,13 +7,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftSkeletonHorse;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderDragon;
@@ -28,6 +32,7 @@ import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Player.Spigot;
 import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -53,6 +58,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -63,6 +69,8 @@ import main.Recipes;
 import main.commands.Blockdata;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_16_R3.EntityHorseSkeleton;
+import net.minecraft.server.v1_16_R3.NBTTagCompound;
 
 public class Events implements Listener {
 	
@@ -510,13 +518,29 @@ public class Events implements Listener {
 			}
 		}
 		
-		ItemStack[] knightarmor = {new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.IRON_CHESTPLATE), new ItemStack(Material.GOLDEN_HELMET)};
+		ItemStack[] knightarmor = {
+				new ItemStack(Material.GOLDEN_BOOTS), 
+				new ItemStack(Material.CHAINMAIL_LEGGINGS), 
+				new ItemStack(Material.IRON_CHESTPLATE), 
+				new ItemStack(Material.LIGHT_GRAY_BANNER)};
 		
-		if(type.equals(EntityType.SKELETON)) {
-			LivingEntity st = e.getEntity();
+		if(type.equals(EntityType.SKELETON) && sr == SpawnReason.NATURAL) {
+			/*LivingEntity st = e.getEntity();
 			st.getEquipment().setArmorContents(knightarmor);
 			st.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
-			st.getEquipment().setItemInOffHand(new ItemStack(Material.SHIELD));
+			st.getEquipment().setItemInOffHand(new ItemStack(Material.SHIELD));*/
+			e.getEntity().remove();
+			SkeletonHorse sh = (SkeletonHorse) loc.getWorld().spawnEntity(loc, EntityType.SKELETON_HORSE);
+			//sh.setOwner();
+			sh.setRemoveWhenFarAway(true);
+			sh.setTamed(true);
+			net.minecraft.server.v1_16_R3.EntityHorseSkeleton skeletonhorse = (EntityHorseSkeleton) ((CraftSkeletonHorse) sh).getHandle();
+			skeletonhorse.t(true);
+			
+			
+			//sh.teleport(sh.getLocation());
+			//sh.addPassenger(st);
+			//sh.getPersistentDataContainer().set(new NamespacedKey(Main.main, "firebomb"),PersistentDataType.BYTE, (byte) 1);
 		}
 		
 		/*if(e.getEntity() instanceof Monster && Main.main.getConfig().getBoolean("RealyHardWorld") && sr != SpawnReason.CUSTOM && sr != SpawnReason.SPAWNER) {

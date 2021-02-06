@@ -10,6 +10,7 @@ import org.bukkit.entity.Piglin;
 import org.bukkit.entity.Pillager;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.entity.Stray;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +19,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.weather.LightningStrikeEvent;
+import org.bukkit.event.weather.LightningStrikeEvent.Cause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.metadata.FixedMetadataValue;
 
@@ -49,10 +52,18 @@ public class ExplosionListener implements Listener {
 		e.getEntity().setMetadata("radius", new FixedMetadataValue(Main.main, e.getRadius()));
 		e.getEntity().setMetadata("setfire", new FixedMetadataValue(Main.main, e.getFire()));
 	}
-	@EventHandler
+	/*@EventHandler
 	public void onLightning(EntitySpawnEvent e) {
 		if(e.getEntityType().equals(EntityType.LIGHTNING)) {
 			Location loc = e.getEntity().getLocation();
+			loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), 3, true, true);
+		}
+	}*/
+	
+	@EventHandler
+	public void onLightning(LightningStrikeEvent e) {
+		if(!e.getCause().equals(Cause.TRAP)) {
+			Location loc = e.getLightning().getLocation();
 			loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), 3, true, true);
 		}
 	}

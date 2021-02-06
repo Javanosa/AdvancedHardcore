@@ -1,5 +1,5 @@
 name: AdvancedHardcore
-version: 0.91
+version: 0.92
 author: Jonosa
 main: main.Main
 api-version: 1.16
@@ -19,8 +19,8 @@ commands:
     description: Heil einen Spieler
   tglmethod:
     description: Toggle Method
-  blockdata:
-    description: Zeigt dir die Blockdata des angeklickten Blocks
+  trash:
+    description: Mülleimer
 # Zweimal pro Klick bei PlayerInteractEvent
 # Equipment von Mobs testen
 # Fallende Blöcke immer platzieren

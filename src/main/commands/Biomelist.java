@@ -12,8 +12,6 @@ public class Biomelist implements CommandExecutor{
 			if (sender instanceof Player) {
 				Player p = (Player) sender;
 				
-				
-				
 				p.sendMessage(
 					"§a Beach\n"
 					+ "Desert\n"
