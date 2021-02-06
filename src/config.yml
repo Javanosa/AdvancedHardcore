@@ -1,0 +1,33 @@
+JoinMessage: ''
+LeaveMessage: ''
+#
+ProtectSkeletonFromFire: true
+#
+ProtectedBlocks:
+- 'OBSIDIAN'
+#
+NoMovingBlocks:
+- 'SPAWNER'
+#
+ExplosiondamageMultiplier: 0.5
+#
+RandomArrow:
+    maxRandom: 25
+    Fire: default
+    TNT: 5
+    Lightning: 15
+    Explosion: 25
+RealyHardWorld: false
+#
+SupportedBlocks:
+- FENCES
+- IRON_BARS
+- GLASS_PANE
+- ALL SOLID BLOCKS
+- WALLS
+#
+UnSupportetBlocks: 
+- LEAVES
+- FENCE_GATES
+- TRAPDOORS
+- CHAIN

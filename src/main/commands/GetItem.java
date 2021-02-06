@@ -85,6 +85,7 @@ public class GetItem implements CommandExecutor{
 		meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		meta.setLocalizedName("§cExplosiverBogen");
+		meta.setUnbreakable(true);
 		superbow.setItemMeta(meta);
 	}
 	

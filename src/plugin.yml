@@ -1,5 +1,5 @@
 name: AdvancedHardcore
-version: 0.9
+version: 0.91
 author: Jonosa
 main: main.Main
 api-version: 1.16
@@ -17,3 +17,13 @@ commands:
     description: Gibt dir wichtige Tools
   heal:
     description: Heil einen Spieler
+  tglmethod:
+    description: Toggle Method
+  blockdata:
+    description: Zeigt dir die Blockdata des angeklickten Blocks
+# Zweimal pro Klick bei PlayerInteractEvent
+# Equipment von Mobs testen
+# Fallende Blöcke immer platzieren
+# Playerdeath 4
+# Items die despawnen ergreifbar machen
+# item.getPersistentDataContainer()

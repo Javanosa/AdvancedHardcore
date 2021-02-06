@@ -1,5 +1,8 @@
 package main.listener;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -7,16 +10,25 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Egg;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.EnderDragon.Phase;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Player.Spigot;
 import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,7 +38,9 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -34,7 +48,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -43,12 +59,16 @@ import org.bukkit.util.Vector;
 
 import io.netty.util.internal.ThreadLocalRandom;
 import main.Main;
+import main.Recipes;
+import main.commands.Blockdata;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class Events implements Listener {
 	
 	public void eggthrower(Player p, Cancellable e, String namespace, Material material, ItemStack item) {
 		Action action = ((PlayerInteractEvent) e).getAction();
-		if(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)) {
+		if((action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)) && System.currentTimeMillis()-lastaction > 1) {
 			Vector vec = p.getLocation().getDirection().multiply(2);
 			Location loc = p.getLocation();
 			loc.setY(loc.getY()+1.5);
@@ -61,11 +81,13 @@ public class Events implements Listener {
 			
 			if(!p.getGameMode().equals(GameMode.CREATIVE))
 				item.setAmount(item.getAmount()-1);
-			
+			lastaction = System.currentTimeMillis();
 			e.setCancelled(true);
 		}
 		
 	}
+	
+	long lastaction = 0;
 	
 	@EventHandler(ignoreCancelled = false)
 	public void onInteract(PlayerInteractEvent e) {
@@ -73,27 +95,44 @@ public class Events implements Listener {
 		ItemStack mhi = p.getInventory().getItemInMainHand();
 		ItemStack ohi = p.getInventory().getItemInOffHand();
 		
+		
+		
+		/*if(Blockdata.blockdata) {
+			p.sendMessage(e.getClickedBlock().getBlockData().getAsString());
+			e.setCancelled(true);
+		}
+		else */
 		if(mhi.hasItemMeta()) {
-			String displayname = mhi.getItemMeta().getLocalizedName();
-			if(displayname.equals("§7§lMobfalle")) {
-				eggthrower(p, e, "mobtrap", Material.IRON_BARS, mhi);
-			}
-			else if(displayname.equals("§5§lSpinnenfalle")) {
-				eggthrower(p, e, "spidertrap", Material.SPIDER_SPAWN_EGG, mhi);
-			}
-			
+				String displayname = mhi.getItemMeta().getLocalizedName();
+				if(displayname.equals("§7§lMobfalle")) {
+					eggthrower(p, e, "mobtrap", Material.IRON_BARS, mhi);
+				}
+				else if(displayname.equals("§5§lSpinnenfalle")) {
+					eggthrower(p, e, "spidertrap", Material.SPIDER_SPAWN_EGG, mhi);
+				}
 				
-		}
-		if(ohi.hasItemMeta()) {
-			String displayname = ohi.getItemMeta().getLocalizedName();
-			if(displayname.equals("§7§lMobfalle")) {
-				eggthrower(p, e, "mobtrap", Material.IRON_BARS, ohi);
+					
 			}
-			else if(displayname.equals("§5§lSpinnenfalle")) {
-				eggthrower(p, e, "spidertrap", Material.SPIDER_SPAWN_EGG, ohi);
+			if(ohi.hasItemMeta()) {
+				String displayname = ohi.getItemMeta().getLocalizedName();
+				if(displayname.equals("§7§lMobfalle")) {
+					eggthrower(p, e, "mobtrap", Material.IRON_BARS, ohi);
+				}
+				else if(displayname.equals("§5§lSpinnenfalle")) {
+					eggthrower(p, e, "spidertrap", Material.SPIDER_SPAWN_EGG, ohi);
+				}
 			}
-		}
+		
+		
+		
 	}
+	
+	/*@EventHandler(ignoreCancelled = false)
+	public void onEntityChangeBlock(EntityChangeBlockEvent e) {
+		if(e.getEntityType().equals(EntityType.FALLING_BLOCK)) {
+			Bukkit.broadcastMessage(e.getBlock().getBlockData().getAsString());
+		}
+	}*/
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
@@ -102,7 +141,6 @@ public class Events implements Listener {
 			p.setNoDamageTicks(200);
 		else
 			p.setNoDamageTicks(400);
-		
 		
 		e.setJoinMessage("§7-> §d" + p.getName()+"§7 hat den Server §abetreten§7.");
 	}
@@ -143,7 +181,7 @@ public class Events implements Listener {
 					|| material.equals(Material.GRASS_BLOCK)
 					|| material.equals(Material.PODZOL) ) {
 				block.setType(itemstack);
-				Main.main.getLogger().info("§aPlaced in " + itemstack.name() + " §7in " + loc.getWorld().getName()
+				Main.main.getLogger().info("§aPlaced " + itemstack.name() + " §7in " + loc.getWorld().getName()
 				+ " at " + loc.getBlockX() + " " + loc.getBlockY() + " " +  loc.getBlockZ());
 				}
 			}
@@ -179,49 +217,236 @@ public class Events implements Listener {
 		
 	}
 	
-	/*@EventHandler
+	public Block return_block(int x, int y, int z, World w, int i, int face) {
+		Block block = null;
+		switch(face) {
+		case 1:
+			block = w.getBlockAt(x - i, y, z);
+			break;
+		case 2:
+			block = w.getBlockAt(x, y, z + i);
+			break;
+		case 3:
+			block = w.getBlockAt(x + i, y, z);
+			break;
+		case 4:
+			block = w.getBlockAt(x, y, z - i);
+			break;
+		case 5:
+			block = w.getBlockAt(x, y + i, z);
+			break;
+		case 6:
+			block = w.getBlockAt(x, y - i, z);
+			break;
+		}
+		
+		/*switch(string) {
+		case "minecraft:dispenser[facing=west":
+			block = w.getBlockAt(x - i, y, z);
+			break;
+		case "minecraft:dispenser[facing=south":
+			block = w.getBlockAt(x, y, z + i);
+			break;
+		case "minecraft:dispenser[facing=east":
+			block = w.getBlockAt(x + i, y, z);
+			break;
+		case "minecraft:dispenser[facing=north":
+			block = w.getBlockAt(x, y, z - i);
+			break;
+		case "minecraft:dispenser[facing=up":
+			block = w.getBlockAt(x, y + i, z);
+			break;
+		case "minecraft:dispenser[facing=down":
+			block = w.getBlockAt(x, y - i, z);
+			break;
+		}*/
+		
+		return block;
+		
+	}
+	
+	/*private void cleanItem(ItemStack itemstack, ItemMeta itemmeta) {
+		itemmeta.setLocalizedName(null);
+		itemmeta.setDisplayName(null);
+		itemmeta.setLore(null);
+		for(Enchantment enchant : Enchantment.values()) {
+			itemmeta.removeEnchant(enchant);
+		}
+		itemmeta.removeItemFlags(ItemFlag.values());
+		itemstack.setItemMeta(itemmeta);
+	}*/
+	
+	List<Material> rep_material_list = Arrays.asList(Material.SNOW, Material.WATER, Material.LAVA);
+	
+	@EventHandler
 	public void onGateOpenClose(BlockDispenseEvent e) {
 		Dispenser con = (Dispenser) e.getBlock().getState();
 		
 		if(con.getCustomName() != null && con.getCustomName().equals("Gate")) {
+			e.setCancelled(true);
 			
 			Material material = e.getItem().getType();
-			Location l = e.getBlock().getLocation();
-			Location loc1 = new Location(l.getWorld(), l.getX(), l.getY() +1, l.getZ());
-			Location loc2 = new Location(l.getWorld(), l.getX(), l.getY() +2, l.getZ());
-			Location loc3 = new Location(l.getWorld(), l.getX(), l.getY() +3, l.getZ());
-			
-			Block b1 = l.getWorld().getBlockAt(loc1);
-			Block b2 = l.getWorld().getBlockAt(loc2);
-			Block b3 = l.getWorld().getBlockAt(loc3);
-			
 			Inventory inv = con.getInventory();
+			ItemStack itemstack = inv.getItem(0);
+			if(itemstack == null || !material.isBlock()) {
+				return;
+			}
+			int count = itemstack.getAmount();
 			
-			if(inv.contains(material, 3)) {
-				for(int i=0; i<3; i++) {
-					Bukkit.broadcastMessage("remove" + i);
-					inv.remove(material);
-					
+			Location l = con.getLocation();
+			
+			BlockFace targetface = ((org.bukkit.material.Dispenser) con.getData()).getFacing();
+			
+			int face = 0;
+			
+			switch(targetface) {
+				case WEST:
+					face = 1;
+					break;
+				case SOUTH:
+					face = 2;
+					break;
+				case EAST:
+					face = 3;
+					break;
+				case NORTH:
+					face = 4;
+					break;
+				case UP:
+					face = 5;
+					break;
+				case DOWN:
+					face = 6;
+					break;
+			}
+			
+			World w = l.getWorld();
+			int x = l.getBlockX();
+			int y = l.getBlockY();
+			int z = l.getBlockZ();
+			
+			//Bukkit.broadcastMessage(targetface.name());
+			
+			//Bukkit.broadcastMessage(w.getName() + " / " + x + " " + y + " " + z + " / "+count+" / "+itemstack.getType().name()+" / " + inv.getSize());
+			
+			int length = 0;
+			
+			//Bukkit.broadcastMessage(e.getBlock().getRelative(BlockFace.DOWN).toString());
+			//String string = e.getBlock().getBlockData().getAsString().substring(27).split(",")[0];
+			
+			//Bukkit.broadcastMessage(string);
+			
+			//return_block(x, y, z, w, 1, string[0]);
+			
+			BlockData bd = null;
+			
+			ItemMeta itemmeta = itemstack.getItemMeta();
+			
+			String displayname = itemmeta.getDisplayName();
+			
+			//Bukkit.broadcastMessage(itemmeta.getLocalizedName().toString() + itemmeta.hasLocalizedName());
+			
+			if(!displayname.isEmpty() && !itemmeta.hasLocalizedName() && !displayname.toLowerCase().contains("type=double")) {
+				try {
+					bd = Bukkit.createBlockData(material, displayname);
 				}
+				catch(Exception ec) {
+					Main.main.getLogger().warning("Gate -> Fehler beim erstellen der BlockData");
+					/*Bukkit.getScheduler().scheduleSyncDelayedTask(Main.main, new Runnable() {
+						@Override
+						public void run() {
+							for(Entity et : w.getNearbyEntities(l, 16, 16, 16)) {
+								if(et instanceof Player) {
+									//((Player) et).sendTitle("", "§cTor geschlossen", 10, 40, 10);
+									((Player) et).spigot().sendMessage(ChatMessageType.SYSTEM, new TextComponent("§eGate -> Fehler beim erstellen der BlockData"));
+								}
+							}
+						}
+						
+					}, 0);*/
+					w.playSound(l, Sound.BLOCK_REDSTONE_TORCH_BURNOUT, 1f, 1f);
+					
+					
+					itemstack.setItemMeta(null);
+				}
+			} else{
+				if(itemmeta.hasLocalizedName()) {
+					itemstack.setItemMeta(null);
+				}
+			}
+			
+			/*Bukkit.broadcastMessage(bd+"");
+			Bukkit.broadcastMessage(displayname);*/
+			
+			if(count > 1) {
 				
-				b1.setType(material);
-				b2.setType(material);
-				b3.setType(material);
+				
+				
+				
+				
+				for(int i = 1; i <= 16; i++) {
+					if(length < count - 1) {
+						//Block block = w.getBlockAt(x, y + i, z);
+						Block block = return_block(x, y, z, w, i, face);
+						if(block.getType().isAir() || rep_material_list.contains(block.getType())) {
+							block.setType(material);
+							if(bd != null)
+								block.setBlockData(bd);
+							length++;
+							
+						}
+						else if(i > 2){
+							i = 16;
+						}
+						
+					}
+				}
+				//e.setCancelled(true);
+				itemstack.setAmount(count - length);
+				
+				w.playSound(l, Sound.BLOCK_PISTON_EXTEND, 0.3f, 0.7f);
+				
+				for(Entity et : w.getNearbyEntities(l, 16, 16, 16)) {
+					if(et instanceof Player) {
+						//((Player) et).sendTitle("", "§cTor geschlossen", 10, 40, 10);
+						((Player) et).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§cTor geschlossen"));
+					}
+				}
 				
 			}
-			else if(b1.getType().equals(Material.OAK_FENCE) && b2.getType().equals(Material.OAK_FENCE) && b3.getType().equals(Material.OAK_FENCE)) {
-				for(int i=0; i<3; i++) {
-					Bukkit.broadcastMessage("add" + i);
-					inv.addItem(new ItemStack(Material.OAK_FENCE));
-					
+			else{
+				for(int i = 1; i <= 16; i++) {
+					//Block block = w.getBlockAt(x, y + i, z);
+					Block block = return_block(x, y, z, w, i, face);
+					//Bukkit.broadcastMessage(block.getBlockData().getAsString());
+					if(block.getType().equals(material) && bd == null || block.getBlockData().matches(bd)) {
+							block.setType(Material.AIR);
+							length++;
+					}
+					else if(i > 2){
+						i = 16;
+					}
 				}
 				
-				b1.setType(Material.AIR);
-				b2.setType(Material.AIR);
-				b3.setType(Material.AIR);
+				if(length != 0) {
+					//e.setCancelled(true);
+					itemstack.setAmount(length + count);
+					
+
+					w.playSound(l, Sound.BLOCK_PISTON_CONTRACT, 0.3f, 0.7f);
+					
+					
+					for(Entity et : w.getNearbyEntities(l, 16, 16, 16)) {
+						if(et instanceof Player) {
+							//((Player) et).sendTitle("", "§aTor geöffnet", 10, 40, 10);
+							((Player) et).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§aTor geöffnet"));
+						}
+					}
+				}
+				
 			}
 		}
-	}*/
+	}
 	
 	
 	@EventHandler
@@ -243,7 +468,19 @@ public class Events implements Listener {
 		}
 	}
 	
-	PotionEffect potioneffect_fire = new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 1, false, true);
+	/*@EventHandler
+	public void onFallingBlockFake(EntityChangeBlockEvent e) {
+		if(e.getEntityType().equals(EntityType.FALLING_BLOCK)) {
+			//e.setCancelled(true);
+			e.getBlock().setType(Material.DIAMOND);
+			e.getEntity().remove();
+			//e.getBlockData().merge(Bukkit.createBlockData(Material.ACACIA_STAIRS));
+		}
+	}*/
+	
+	//PotionEffect potioneffect_fire = new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 1200, 1, false, true);
+	
+	public int enderdragons = 0;
 	
 	@EventHandler
 	public void onSkeletonSpawn(CreatureSpawnEvent e) {
@@ -251,29 +488,68 @@ public class Events implements Listener {
 		EntityType type = e.getEntityType();
 		SpawnReason sr = e.getSpawnReason();
 		Location loc = e.getLocation();
-		
 		if(type.equals(EntityType.SKELETON) || type.equals(EntityType.PHANTOM)) {
-			if(sr != SpawnReason.CUSTOM) {
+			if(sr != SpawnReason.CUSTOM && sr != SpawnReason.SPAWNER) {
 				World w = loc.getWorld();
 				
 				int random = randomt.nextInt(1, 4 + 1);
 				if(random == 1) {
-					Phantom pt = (Phantom) w.spawnEntity(loc, EntityType.PHANTOM);
-					Skeleton st = (Skeleton) w.spawnEntity(loc, EntityType.SKELETON);
-					pt.setRemoveWhenFarAway(true);
-					st.setRemoveWhenFarAway(true);
-					st.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
-					pt.addPassenger(st);
+					Block b = new Location(w,loc.getX(),loc.getY()+1,loc.getZ()).getBlock();
+					if(b.getType() != Material.CAVE_AIR) {
+						Phantom pt = (Phantom) w.spawnEntity(loc, EntityType.PHANTOM);
+						Skeleton st = (Skeleton) w.spawnEntity(loc, EntityType.SKELETON);
+						pt.setRemoveWhenFarAway(true);
+						st.setRemoveWhenFarAway(true);
+						pt.addPassenger(st);
+					}
+					
 					
 				}
 			}
 		}
-			
-		LivingEntity ey = e.getEntity();
-		if(type.equals(EntityType.SKELETON) || type.equals(EntityType.STRAY)) {
-			ey.addPotionEffect(potioneffect_fire);
+		
+		ItemStack[] knightarmor = {new ItemStack(Material.LEATHER_BOOTS), new ItemStack(Material.CHAINMAIL_LEGGINGS), new ItemStack(Material.IRON_CHESTPLATE), new ItemStack(Material.GOLDEN_HELMET)};
+		
+		if(type.equals(EntityType.SKELETON)) {
+			LivingEntity st = e.getEntity();
+			st.getEquipment().setArmorContents(knightarmor);
+			st.getEquipment().setItemInMainHand(new ItemStack(Material.IRON_SWORD));
+			st.getEquipment().setItemInOffHand(new ItemStack(Material.SHIELD));
 		}
+		
+		/*if(e.getEntity() instanceof Monster && Main.main.getConfig().getBoolean("RealyHardWorld") && sr != SpawnReason.CUSTOM && sr != SpawnReason.SPAWNER) {
+			World w = loc.getWorld();
+			int random = randomt.nextInt(1, 50 + 1);
+			if(random == 1 || random == 2 || random == 3) {
+				Wither wither = (Wither) w.spawnEntity(loc, EntityType.WITHER);
+				Bukkit.broadcastMessage(wither.getHealth()+"wither");
+				wither.setHealth(150);
+				Player p = Bukkit.getPlayer("Jonosa");
+				if(p != null)
+					wither.setTarget(p);
+				
+				wither.getBossBar().setVisible(false);
+				wither.setRemoveWhenFarAway(true);
+			}
+			else if(random == 4 && enderdragons <= 3) {
+				EnderDragon enderdragon = (EnderDragon) w.spawnEntity(loc, EntityType.ENDER_DRAGON);
+				enderdragon.setPhase(Phase.BREATH_ATTACK);
+				Bukkit.broadcastMessage(enderdragon.getHealth()+"ender");
+				enderdragon.setHealth(100);
+				enderdragon.getBossBar().setVisible(false);
+				//enderdragon.setRemoveWhenFarAway(true);
+				enderdragons++;
+				
+			}
+		}*/
 	}
+	
+	/*@EventHandler
+	public void onEnderDragonDeath(EntityDeathEvent e) {
+		if(Main.main.getConfig().getBoolean("RealyHardWorld") && e.getEntityType().equals(EntityType.ENDER_DRAGON)) {
+			enderdragons--;
+		}
+	}*/
 	
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent e) {
@@ -282,13 +558,14 @@ public class Events implements Listener {
 		+ " at " + l.getBlockX() + " " + l.getBlockY() + " " +  l.getBlockZ() + " §aLevel: " + e.getEntity().getLevel());
 		
 		World w = l.getWorld();
+		
 		FixedMetadataValue metadata = new FixedMetadataValue(Main.main, 4);
 		for(ItemStack itemstack : e.getDrops()) {
-			Item item = (Item) w.spawnEntity(l, EntityType.DROPPED_ITEM);
-			item.setItemStack(itemstack);
+			Item item = w.dropItem(l, itemstack);
+			//item.setItemStack(itemstack);
 			item.setInvulnerable(true);
 			item.setMetadata("playerdeath", metadata);
-			//item.setTicksLived(-18000);
+			//item.setTicksLived(18000);
 		}
 		e.getDrops().clear();
 				

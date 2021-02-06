@@ -1,8 +1,16 @@
 package main.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Phantom;
+import org.bukkit.entity.Piglin;
+import org.bukkit.entity.Pillager;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Stray;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -50,13 +58,39 @@ public class ExplosionListener implements Listener {
 	}
 	@EventHandler
 	public void onPlayerExplosionDamage(EntityDamageEvent e) {
-		if(e.getCause().equals(DamageCause.BLOCK_EXPLOSION) 
-		|| e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
-			if(e.getEntity() instanceof Player) {
+		DamageCause cause = e.getCause();
+		Entity et = e.getEntity();
+		/*Entity et = e.getEntity();
+		if(!(et instanceof Player) && et instanceof Damageable) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.main, new Runnable() {
+				@Override
+				public void run() {
+					double health =  Math.round(((Damageable) et).getHealth()*10)/10.0;
+					if(health==0.0) {
+						Location l = et.getLocation();
+						Location pl = Bukkit.getPlayer("Jonosa").getLocation();
+						
+						if(l.distance(pl) < 32) {
+							Bukkit.broadcastMessage(e.getCause().name());
+						}
+						
+						
+					}
+					et.setCustomName("§c"+health);
+					et.setCustomNameVisible(true);
+				}
+				
+			}, 0);
+			
+			
+		}*/
+		if(cause.equals(DamageCause.BLOCK_EXPLOSION) 
+		|| cause.equals(DamageCause.ENTITY_EXPLOSION)) {
+			if(et instanceof Player) {
 				e.setDamage(e.getDamage()/2);
 			}
 		}
-		else if(e.getCause().equals(DamageCause.FALLING_BLOCK)) {
+		else if(cause.equals(DamageCause.FALLING_BLOCK)) {
 				double damage;
 				if(e.getDamage() > 5)
 					damage = 5;
@@ -64,6 +98,16 @@ public class ExplosionListener implements Listener {
 					damage = e.getDamage()/2;
 				
 				e.setDamage(damage);
+		}
+		else if(cause.equals(DamageCause.FIRE)
+		/*|| cause.equals(DamageCause.FIRE_TICK)*/) {
+			if(et instanceof Skeleton || et instanceof Stray || et instanceof Phantom || et instanceof Pillager || et instanceof Piglin) {
+				//long time = et.getWorld().getTime();
+				//if(time < 23500 && time > 13000 || et.getLocation().getBlock().getLightFromSky() < 15) {
+					e.setCancelled(true);
+					et.setFireTicks(0);
+				//}
+			}
 		}
 	}
 }

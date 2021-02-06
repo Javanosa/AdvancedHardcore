@@ -191,10 +191,11 @@ public class ProjectileEvents implements Listener{
 				
 				EntityType entitytype = e.getEntityType();
 				
+				// Wenn die SpecialItems mit der RightHand geworfen werden oder der Superbow genutzt wird
 				if(mhi.hasItemMeta()) {
 					String displayname = mhi.getItemMeta().getLocalizedName();
 					
-					if(displayname.equals("§cExplosiverBogen")){
+					if(displayname.equals("§cExplosiverBogen")) {
 						if(ohi.equals(GetItem.bow_bomb)) 
 							namespace = "xbow_bomb";
 						else if(ohi.equals(GetItem.bow_rocket))
@@ -248,13 +249,16 @@ public class ProjectileEvents implements Listener{
 							namespace = "waterbomb";
 						}
 					}
-					else if(ohi.getType().equals(Material.TNT) && mhi.getType().equals(Material.BOW)) {
-						namespace = "tnt";
-						ohi.setAmount(ohi.getAmount() - 1);
-					}
+					
 					
 					
 				}
+				// Wenn keine ItemMeta notwendig
+				if(ohi.getType().equals(Material.TNT) && !ohi.equals(GetItem.bow_bomb) && mhi.getType().equals(Material.BOW)) {
+					namespace = "tnt";
+					ohi.setAmount(ohi.getAmount() - 1);
+				}
+				// Wenn die SPecialItems mit der Lefthand geworfen werden
 				if(ohi.hasItemMeta()) {
 					String displayname = ohi.getItemMeta().getLocalizedName();
 					
@@ -297,15 +301,6 @@ public class ProjectileEvents implements Listener{
 							namespace = "waterbomb";
 						}
 					}
-					else if(ohi.getType().equals(Material.TNT) && !mhi.equals(GetItem.superbow) && mhi.getType().equals(Material.BOW)) {
-						namespace = "tnt";
-						ohi.setAmount(ohi.getAmount() - 1);
-					}
-				}
-				else if(ohi.getType().equals(Material.TNT) && !mhi.equals(GetItem.superbow) && mhi.getType().equals(Material.BOW)) {
-					namespace = "tnt";
-					ohi.setAmount(ohi.getAmount() - 1);
-					
 				}
 				
 				if(namespace != null)

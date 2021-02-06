@@ -24,6 +24,8 @@ import main.listener.Events;
 
 public class Explosion {
 	
+	public static int useold = 1;
+	
 	public static List<Block> changeBlocks(Location l, int r, int type) {
 		List<Block> blocks = new ArrayList<Block>();
 		World w = l.getWorld();
@@ -191,7 +193,7 @@ public class Explosion {
 			radius = 10f;
 		}
 		
-		
+		//ver = 1;
 		
 		int dummy = 0;
 		
@@ -221,11 +223,73 @@ public class Explosion {
 						bd = Bukkit.createBlockData(Material.CHEST);
 					}
 					
-					p.setY(p.getY()+1);
+					if(useold == 1) {
+						p.setY(p.getY()+0.99);
+						FallingBlock fb = w.spawnFallingBlock(p, bd);
+						fb.setDropItem(false);
+						fb.setHurtEntities(true);
+						Location l = fb.getLocation();
+						
+						double random = Events.randomt.nextDouble(0.5, 1);
+						double x = (l.getX() - loc.getX());
+						double y = (l.getY() - loc.getY() + 1.5); 
+						double z = (l.getZ() - loc.getZ());
+						
+						Vector vector = new Vector(x, y, z);
+						
+						if(s < 30)
+							vector.normalize().multiply(0.5);
+						if(s < 200)
+							vector.normalize().multiply(0.6);
+						else
+							vector.normalize().multiply(0.7);
+						vector.setX(vector.getX()*random);
+						vector.setZ(vector.getZ()*random);
+						//vector.setY(vector.getY()+0.3);
+
+						fb.setVelocity(vector);
+					}
+					else if(useold == 2){
+						FallingBlock fb = w.spawnFallingBlock(p, bd);
+						fb.setDropItem(false);
+						fb.setHurtEntities(true);
+						Location l = fb.getLocation();
+						
+						double random = Events.randomt.nextDouble(0.5, 1);
+						double x = (l.getX() - loc.getX());
+						double y = (l.getY() - loc.getY() + 1.5); 
+						double z = (l.getZ() - loc.getZ());
+						
+						Vector vector = new Vector(x, y, z);
+						
+						if(s < 30)
+							vector.normalize().multiply(0.5);
+						else
+							vector.normalize().multiply(0.6);
+
+						vector.setX(vector.getX()*random);
+						vector.setZ(vector.getZ()*random);
+						vector.setY(vector.getY()+0.3);
+
+						fb.setVelocity(vector);
+					}
 					
-					FallingBlock fb = w.spawnFallingBlock(p, bd);
-					fb.setDropItem(false);
-					fb.setHurtEntities(true);
+					
+					//p.setZ(p.getZ()+1);
+				
+							
+							
+							//p.getBlock().setType(Material.BRICK);
+							//Bukkit.broadcastMessage(p.getBlock().toString());
+							//p.getWorld().getBlockAt(p).setBlockData(Bukkit.createBlockData(Material.BRICK));
+							
+							
+							
+						
+					
+					
+					//fb.teleport(new Location(p.getWorld(), p.getX(),p.getY()+1,p.getZ()));
+					
 					
 					/*double x = (Math.random() - Math.random()) / 1.5;
                     double y = Math.random() / 1.5;
@@ -234,26 +298,9 @@ public class Explosion {
                     fb.setVelocity(new Vector(x, y, z));*/
 					
 					
+							
 					
 					
-					Location l = fb.getLocation();
-					
-					double random = Events.randomt.nextDouble(0.5, 1);
-					double x = (l.getX() - loc.getX());
-					double y = (l.getY() - loc.getY() + 1.5);
-					double z = (l.getZ() - loc.getZ());
-					
-					Vector vector = new Vector(x, y, z);
-					
-					if(s < 30)
-						vector.normalize().multiply(0.5);
-					else
-						vector.normalize().multiply(0.6);
-
-					vector.setX(vector.getX()*random);
-					vector.setZ(vector.getZ()*random);
-
-					fb.setVelocity(vector);
 					
 					dummy++;
 				}

@@ -1,1 +1,1 @@
-"# AdvancedHardcore" 
+# AdvancedHardcore
