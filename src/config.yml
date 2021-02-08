@@ -1,34 +1,34 @@
 # Diese Config wird noch nicht aktiv genutzt!
-JoinMessage: ''
-LeaveMessage: ''
+JoinMessage: '&7-> &d{Player}&7 hat den Server &abetreten&7.'
+LeaveMessage: '&7<- &d{Player}&7 hat den Server &cverlassen&7.'
 #
 ProtectSkeletonFromFire: true
 #
 ProtectedBlocks:
 - 'OBSIDIAN'
 #
+ExplosionDamageMultiplier: 0.5
+#
 NoMovingBlocks:
 - 'SPAWNER'
 #
-ExplosiondamageMultiplier: 0.5
-#
 RandomArrow:
-    maxRandom: 25
-    Fire: default
-    TNT: 5
-    Lightning: 15
-    Explosion: 25
-RealyHardWorld: false
-#
+    MaxRandom: 25
+    Intergers:
+        Fire: default
+        TNT: 5
+        Lightning: 15
+        Explosion: 25
+# 
 SupportedBlocks:
-- FENCES
-- IRON_BARS
-- GLASS_PANE
-- ALL SOLID BLOCKS
-- WALLS
+- 'FENCES'
+- 'IRON_BARS'
+- 'GLASS_PANE'
+- 'ALL SOLID BLOCKS'
+- 'WALLS'
 #
 UnSupportetBlocks: 
-- LEAVES
-- FENCE_GATES
-- TRAPDOORS
-- CHAIN
+- 'LEAVES'
+- 'FENCE_GATES'
+- 'TRAPDOORS'
+- 'CHAIN'

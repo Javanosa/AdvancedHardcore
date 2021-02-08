@@ -1,5 +1,5 @@
 name: AdvancedHardcore
-version: 0.92
+version: alpha 0.93
 author: Jonosa
 main: main.Main
 api-version: 1.16
@@ -16,14 +16,35 @@ commands:
   getitem:
     description: Gibt dir wichtige Tools
   heal:
-    description: Heil einen Spieler
+    description: Heilt dich
   tglmethod:
-    description: Toggle Method
+    description: Explosions Methode umschalten
   trash:
     description: Mülleimer
-# Zweimal pro Klick bei PlayerInteractEvent
-# Equipment von Mobs testen
+  gate:
+    description: Blockdata anzeigen und für Item setzen
+    
 # Fallende Blöcke immer platzieren
-# Playerdeath 4
-# Items die despawnen ergreifbar machen
-# item.getPersistentDataContainer()
+# usesage etc.
+# Items von playerdeath mit nbt age oder persistentdata machen
+# items per nbt sichern
+# Witchcreature papermc
+
+
+# Casten von liste 40ms - 60ms
+# casten von listitem 60ms - 100ms
+# alte methode setItemStack() 70ms 90ms 100ms 120ms 150ms
+# Loaded 658 Itemstacks and 13 Invs!
+
+#### Before new final Update
+
+# remove skeletonhorsespawns
+#- require op for /trash
+# make Gate secure
+# disable itemdespawn debug message
+# disable itemdamage message (disable complete?)
+# optimize Itemsaver
+#- minimify Itemsaver debugmessages
+# check skeletonrandoms
+#- sort config.yml
+# remove not required commands

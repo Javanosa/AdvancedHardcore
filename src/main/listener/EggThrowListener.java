@@ -65,10 +65,10 @@ public class EggThrowListener implements Listener{
 				case "mobtrap":
 					r = 10;		
 					List<Block> blocks2 = new ArrayList<Block>();
-					for(Entity et : p.getNearbyEntities(r, r, r)) {
-						if(et.getType().isAlive() && !et.equals(e.getPlayer()) && !et.isInWater() && !et.isInsideVehicle()) {
-							BoundingBox bb = et.getBoundingBox();
-							Location l = et.getLocation();
+					for(Entity entity : p.getNearbyEntities(r, r, r)) {
+						if(entity.getType().isAlive() && !entity.equals(e.getPlayer()) && !entity.isInWater() && !entity.isInsideVehicle()) {
+							BoundingBox bb = entity.getBoundingBox();
+							Location l = entity.getLocation();
 							
 							double maxy = Math.floor(bb.getMaxY());
 							
@@ -88,11 +88,11 @@ public class EggThrowListener implements Listener{
 					}
 					int prisoned = 0;
 					
-					for(Entity et : p.getNearbyEntities(r, r, r)) {
-						if(et.getType().isAlive() && !et.equals(e.getPlayer()) && !et.isInWater() && !et.isInsideVehicle()) {
+					for(Entity entity : p.getNearbyEntities(r, r, r)) {
+						if(entity.getType().isAlive() && !entity.equals(e.getPlayer()) && !entity.isInWater() && !entity.isInsideVehicle()) {
 							
-							BoundingBox bb = et.getBoundingBox();
-							Location l = et.getLocation();
+							BoundingBox bb = entity.getBoundingBox();
+							Location l = entity.getLocation();
 							
 							double maxy = Math.floor(bb.getMaxY()) + 1;
 							
@@ -127,13 +127,13 @@ public class EggThrowListener implements Listener{
 					break;
 				case "imploding":
 					r = 8;
-					for(Entity et : p.getNearbyEntities(r, r, r)) {
-						if(et.getType().isAlive() && !et.equals(e.getPlayer())) {
-							Location l = et.getLocation();
+					for(Entity entity : p.getNearbyEntities(r, r, r)) {
+						if(entity.getType().isAlive() && !entity.equals(e.getPlayer())) {
+							Location l = entity.getLocation();
 							Vector vec = new Vector(l.getX(),l.getY(),l.getZ());
 							Vector vec2 = new Vector(loc.getX(),loc.getY(),loc.getZ()).subtract(vec);
 							vec2.multiply(0.35);
-							et.setVelocity(vec2);
+							entity.setVelocity(vec2);
 						}
 					}
 					w.spawnParticle(Particle.CRIT, loc, 60, 0, 0, 0, 1);
@@ -141,9 +141,9 @@ public class EggThrowListener implements Listener{
 					break;
 				case "exploding":
 					r = 8;
-					for(Entity et : p.getNearbyEntities(r, r, r)) {
-						if(et.getType().isAlive() && !et.equals(e.getPlayer())) {
-							Location l = et.getLocation();
+					for(Entity entity : p.getNearbyEntities(r, r, r)) {
+						if(entity.getType().isAlive() && !entity.equals(e.getPlayer())) {
+							Location l = entity.getLocation();
 							Vector vec = new Vector(loc.getX(),loc.getY(),loc.getZ());
 							Vector vec2 = new Vector(l.getX(),l.getY()+2,l.getZ());
 							double d = vec.distance(vec2);
@@ -159,7 +159,7 @@ public class EggThrowListener implements Listener{
 								mu = 0.8;
 							}
 							vec2.multiply(mu);
-							et.setVelocity(vec2);
+							entity.setVelocity(vec2);
 						}
 					}
 					w.spawnParticle(Particle.CRIT, loc, 60, 0, 0, 0, 1);
@@ -189,10 +189,10 @@ public class EggThrowListener implements Listener{
 					List<Block> blocks3 = new ArrayList<Block>();
 					List<Entity> targetlist = new ArrayList<>();
 					
-					for(Entity et : p.getNearbyEntities(r, r, r)) {
-						if(et instanceof Monster && !et.isInWater()) {
-							BoundingBox bb = et.getBoundingBox();
-							Location l = et.getLocation();
+					for(Entity entity : p.getNearbyEntities(r, r, r)) {
+						if(entity instanceof Monster && !entity.isInWater()) {
+							BoundingBox bb = entity.getBoundingBox();
+							Location l = entity.getLocation();
 							for(int x=l.getBlockX(); x <= bb.getMaxX(); x++) {
 								for(int z=l.getBlockZ(); z <= bb.getMaxZ(); z++) {
 									for(int y=l.getBlockY(); y <= bb.getMaxY(); y++) {
@@ -205,7 +205,7 @@ public class EggThrowListener implements Listener{
 									}
 								}	
 							}
-							targetlist.add(et);
+							targetlist.add(entity);
 						}
 					}
 					spider_blocks.put(p.getUniqueId(), blocks3);
@@ -234,16 +234,16 @@ public class EggThrowListener implements Listener{
 						for(int y=iy; y <= my; y++) {
 							for(int z=iz; z <= mz; z++) {
 								d = ((bx-x) * (bx-x) + (bz-z) * (bz-z) + (by-y) * (by-y));
-								if(d < r2 - Events.randomt.nextInt(1, 10 + 1)) {
+								if(d < r2 - Main.random.nextInt(1, 10 + 1)) {
 									Material m = w.getBlockAt(x, y, z).getType();
 									Material m1 = w.getBlockAt(x, y - 1, z).getType();
 									if(m.equals(Material.AIR) || m.equals(Material.GRASS) || m.equals(Material.TALL_GRASS) || m.equals(Material.SNOW))
 										if(m1.isSolid()) {
-											int random1 = Events.randomt.nextInt(0, 20);
+											int random1 = Main.random.nextInt(0, 20);
 											if(random1 == 10 && current_spiders <= 6) {
 												Spider spider = (Spider) w.spawnEntity(new Location(w, x, y,z), EntityType.SPIDER);
 												if(targetlist.size()!=0) {
-													int random = Events.randomt.nextInt(0, targetlist.size());
+													int random = Main.random.nextInt(0, targetlist.size());
 													spider.setTarget((Monster) targetlist.get(random));
 												}
 												current_spiders++;

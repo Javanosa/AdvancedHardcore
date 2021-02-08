@@ -2,7 +2,8 @@ package main.listener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Damageable;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Phantom;
@@ -10,22 +11,23 @@ import org.bukkit.entity.Piglin;
 import org.bukkit.entity.Pillager;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.SkeletonHorse;
 import org.bukkit.entity.Stray;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.weather.LightningStrikeEvent.Cause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
+
 import main.Explosion;
 import main.Main;
+import net.minecraft.server.v1_16_R3.ArgumentBlockPredicate.b;
 
 public class ExplosionListener implements Listener {
 	
@@ -98,7 +100,10 @@ public class ExplosionListener implements Listener {
 		if(cause.equals(DamageCause.BLOCK_EXPLOSION) 
 		|| cause.equals(DamageCause.ENTITY_EXPLOSION)) {
 			if(et instanceof Player) {
-				e.setDamage(e.getDamage()/2);
+				if(e.getDamage() > 38)
+					e.setDamage(e.getDamage()/2.5);
+				else
+					e.setDamage(e.getDamage()/2);
 			}
 		}
 		else if(cause.equals(DamageCause.FALLING_BLOCK)) {
@@ -121,4 +126,22 @@ public class ExplosionListener implements Listener {
 			}
 		}
 	}
+	
+	/*@EventHandler
+	public void onRemoveFallingblock(EntityRemoveFromWorldEvent e) {
+		if(e.getEntityType().equals(EntityType.FALLING_BLOCK)) {
+			
+			Location loc = e.getEntity().getLocation();
+			
+			Bukkit.broadcastMessage((loc.getBlockX() - loc.getX()) + " " + (loc.getY() - loc.getBlockY()) + " "+ (loc.getBlockZ() - loc.getZ()));
+			
+			if(loc.getY() - loc.getBlockY() > 0) {
+				loc.setY(loc.getBlockY()+1);
+			}
+			if(loc.getBlock().getType().isAir()) {
+				loc.getBlock().setType(Material.BRICKS);
+			}
+			//e.getHandlers().getRegisteredListeners();
+		}
+	}*/
 }

@@ -4,7 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.jline.internal.Log;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -12,19 +11,20 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import main.Main;
 import main.Recipes;
 
 public class GetItem implements CommandExecutor{
 	
 	public static ItemStack superblock = new ItemStack(Material.SANDSTONE);
-	static{ItemMeta meta = superblock.getItemMeta();
+	static{
+		ItemMeta meta = superblock.getItemMeta();
 		meta.setDisplayName("§cUnzerstörbar");
 		superblock.setItemMeta(meta);
 	}
 
 	public static ItemStack armor_helmet = new ItemStack(Material.NETHERITE_HELMET);
-	static{ItemMeta meta = armor_helmet.getItemMeta();
+	static{
+		ItemMeta meta = armor_helmet.getItemMeta();
 		meta.setDisplayName("§bSuperHelm");
 		meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 10, true);
 		meta.addEnchant(Enchantment.THORNS, 10, true);
@@ -36,7 +36,8 @@ public class GetItem implements CommandExecutor{
 	
 	public static ItemStack armor_chestplate = new ItemStack(Material.NETHERITE_CHESTPLATE);
 	
-	static{ItemMeta meta = armor_chestplate.getItemMeta();
+	static{
+		ItemMeta meta = armor_chestplate.getItemMeta();
 		meta.setDisplayName("§bSuperBrustpanzer");
 		meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 10, true);
 		meta.addEnchant(Enchantment.THORNS, 10, true);
@@ -46,7 +47,8 @@ public class GetItem implements CommandExecutor{
 	
 	public static ItemStack armor_leggins = new ItemStack(Material.NETHERITE_LEGGINGS);
 	
-	static{ItemMeta meta = armor_leggins.getItemMeta();
+	static{
+		ItemMeta meta = armor_leggins.getItemMeta();
 		meta.setDisplayName("§bSuperBeinschutz");
 		meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 10, true);
 		meta.addEnchant(Enchantment.THORNS, 10, true);
@@ -56,7 +58,8 @@ public class GetItem implements CommandExecutor{
 	
 	
 	public static ItemStack armor_boots = new ItemStack(Material.NETHERITE_BOOTS);
-	static{ItemMeta meta = armor_boots.getItemMeta();
+	static{
+		ItemMeta meta = armor_boots.getItemMeta();
 		meta.setDisplayName("§bSuperStiefel");
 		meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 10, true);
 		meta.addEnchant(Enchantment.THORNS, 10, true);
@@ -66,7 +69,8 @@ public class GetItem implements CommandExecutor{
 	}
 	
 	public static ItemStack super_weapon = new ItemStack(Material.NETHERITE_AXE);
-	static{ItemMeta meta = super_weapon.getItemMeta();
+	static{
+		ItemMeta meta = super_weapon.getItemMeta();
 		meta.setDisplayName("§bSuperwaffe");
 		meta.addEnchant(Enchantment.DAMAGE_ALL, 10, true);
 		meta.addEnchant(Enchantment.FIRE_ASPECT, 10, true);
@@ -78,7 +82,8 @@ public class GetItem implements CommandExecutor{
 	public static ItemStack[] superarmor = {armor_boots, armor_leggins, armor_chestplate, armor_helmet};
 	
 	public static ItemStack superbow = new ItemStack(Material.BOW);
-	static{ItemMeta meta = superbow.getItemMeta();
+	static{
+		ItemMeta meta = superbow.getItemMeta();
 		meta.setDisplayName("§cExplosiverBogen");
 		meta.addEnchant(Enchantment.DURABILITY, 10, true);
 		meta.addEnchant(Enchantment.ARROW_FIRE, 1, true);
@@ -90,7 +95,8 @@ public class GetItem implements CommandExecutor{
 	}
 	
 	public static ItemStack bow_bomb = new ItemStack(Material.TNT);
-	static{ItemMeta meta = bow_bomb.getItemMeta();
+	static{
+		ItemMeta meta = bow_bomb.getItemMeta();
 		meta.setDisplayName("§5FeuerBombe");
 		meta.addEnchant(Enchantment.ARROW_FIRE, 1, true);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -99,7 +105,8 @@ public class GetItem implements CommandExecutor{
 	}
 	
 	public static ItemStack bow_rocket = new ItemStack(Material.FIREWORK_ROCKET);
-	static{ItemMeta meta = bow_rocket.getItemMeta();
+	static{
+		ItemMeta meta = bow_rocket.getItemMeta();
 		meta.setDisplayName("§5Rakete");
 		meta.addEnchant(Enchantment.ARROW_FIRE, 1, true);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -108,7 +115,8 @@ public class GetItem implements CommandExecutor{
 	}
 	
 	public static ItemStack bow_nuklear = new ItemStack(Material.FIRE_CHARGE);
-	static{ItemMeta meta = bow_nuklear.getItemMeta();
+	static{
+		ItemMeta meta = bow_nuklear.getItemMeta();
 		meta.setDisplayName("§5NuklearRakete");
 		meta.addEnchant(Enchantment.ARROW_FIRE, 1, true);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -134,11 +142,15 @@ public class GetItem implements CommandExecutor{
 								inv.addItem(new ItemStack(Material.ARROW));
 								break;
 							case "superarmor":
-								p.getEquipment().setArmorContents(superarmor);
+								ItemStack[] armor = p.getEquipment().getArmorContents();
+								if(armor[0] == null && armor[1] == null && armor[2] == null && armor[3] == null)
+									p.getEquipment().setArmorContents(superarmor);
 								inv.addItem(super_weapon);
 								break;
 							case "recipes":
-								inv.setContents(Recipes.recipe_items);
+								for(ItemStack itemstack : Recipes.recipe_items) {
+									inv.addItem(itemstack);
+								}
 								break;
 								
 								

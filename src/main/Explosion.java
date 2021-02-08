@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.util.Vector;
 
 import main.listener.Events;
@@ -42,7 +43,7 @@ public class Explosion {
 			for(int y=iy; y <= my; y++) {
 				for(int z=iz; z <= mz; z++) {
 					d = ((bx-x) * (bx-x) + (bz-z) * (bz-z) + (by-y) * (by-y));
-					if(d < r2 - Events.randomt.nextInt(1, 10 + 1)) {
+					if(d < r2 - Main.random.nextInt(1, 10 + 1)) {
 						blocks.add(w.getBlockAt(x, y, z));
 					}
 				}
@@ -65,7 +66,7 @@ public class Explosion {
 						Location l1 = b.getLocation();
 						Material m1 = l1.getWorld().getBlockAt(l1.getBlockX(), l1.getBlockY() - 1, l1.getBlockZ()).getType();
 						if(m1.isSolid() && !m1.equals(Material.ICE)) {
-							int random = Events.randomt.nextInt(1, 3 + 1);
+							int random = Main.random.nextInt(1, 3 + 1);
 							if(random == 1)
 							nm = Material.FIRE;	
 						}
@@ -75,8 +76,6 @@ public class Explosion {
 					case BLUE_ICE:
 						nm = Material.WATER;
 						break;
-				default:
-					break;
 				}
 				if(nm!=null)
 				b.setType(nm);
@@ -113,8 +112,6 @@ public class Explosion {
 							nm = Material.ICE;
 						}
 						break;
-				default:
-					break;
 				}
 				if(nm!=null)
 				b.setType(nm);
@@ -133,8 +130,6 @@ public class Explosion {
 						nm = Material.AIR;
 						fire = true;
 						break;
-				default:
-					break;
 					
 				}
 				if(nm!=null)
@@ -151,6 +146,7 @@ public class Explosion {
 		
 		
 		Material i;
+		Byte j;
 		Location p;
 		BlockData bd;
 		
@@ -195,6 +191,8 @@ public class Explosion {
 		
 		int dummy = 0;
 		
+		Inventory inv = null;
+		
 		//long starttime = System.nanoTime();
 		for(int v=0; v < blocks.size(); v+=ver) {
 			//v = v+5;
@@ -220,13 +218,25 @@ public class Explosion {
 					}
 					
 					if(useold == 1) {
+						
+						
 						p.setY(p.getY()+0.99);
 						FallingBlock fb = w.spawnFallingBlock(p, bd);
 						fb.setDropItem(false);
 						fb.setHurtEntities(true);
+						
+						
+						/*if(i.equals(Material.CHEST) || i.equals(Material.HOPPER) || i.equals(Material.FURNACE) || i.equals(Material.BLAST_FURNACE) 
+						|| i.equals(Material.DISPENSER) || i.equals(Material.BARREL) || i.equals(Material.TRAPPED_CHEST) || i.equals(Material.SMOKER) || i.equals(Material.DROPPER)) {
+							Container cont = (Container) b.getState();
+							
+							fb.getPersistentDataContainer().set(new NamespacedKey(Main.main,"containerdata"), PersistentDataType.TAG_CONTAINER, cont.getLock());
+							fb.getPersistentDataContainer().set(new NamespacedKey(Main.main,"containerdata"), PersistentDataType.STRING, cont.getLock());
+						}*/
+						
 						Location l = fb.getLocation();
 						
-						double random = Events.randomt.nextDouble(0.5, 1);
+						double random = Main.random.nextDouble(0.5, 1);
 						double x = (l.getX() - loc.getX());
 						double y = (l.getY() - loc.getY() + 1.5); 
 						double z = (l.getZ() - loc.getZ());
@@ -251,7 +261,7 @@ public class Explosion {
 						fb.setHurtEntities(true);
 						Location l = fb.getLocation();
 						
-						double random = Events.randomt.nextDouble(0.5, 1);
+						double random = Main.random.nextDouble(0.5, 1);
 						double x = (l.getX() - loc.getX());
 						double y = (l.getY() - loc.getY() + 1.5); 
 						double z = (l.getZ() - loc.getZ());
@@ -324,6 +334,7 @@ public class Explosion {
 			}
 			
 		}, 20);*/
+		
 		/*for(Block b : blocks) {
 			m = b.getType();*/
 			// Notwendig, falls das Event cancelled ist.
@@ -332,20 +343,20 @@ public class Explosion {
 				BlockState state = b.getState();
 				
 				Container cont = (Container) state;
-                inv = cont.getSnapshotInventory();
-                
-                for(ItemStack item : inv.getContents()) {
-                	if(item!=null) {
+	            inv = cont.getSnapshotInventory();
+	            
+	            for(ItemStack item : inv.getContents()) {
+	            	if(item!=null) {
 	                	Item itemob = (Item) w.spawnEntity(b.getLocation(), EntityType.DROPPED_ITEM);
 	                	itemob.setItemStack(item);
 	                	itemob.setInvulnerable(true);
-                	}
-                }
+	            	}
+	            }
 			}*/
 			//b.setType(Material.AIR);
 		//}
 		
-		Main.main.getLogger().info("§e Size > " + blocks.size()
+		Main.log.info("§e Size > " + blocks.size()
 				+ " §6 FinalSize > " + dummy
 				+ " §e Reduce > " + ver
 				+ " §6 NewRadius > " + radius);

@@ -74,9 +74,9 @@ public class ProjectileEvents implements Listener{
 						break;
 					case "firebomb":
 						r = 4;
-						for(Entity et : p.getNearbyEntities(r + 2, r + 2, r + 2)) {
-							if(et.getType().isAlive() && !et.equals(p.getShooter())) {
-								((LivingEntity) et).setFireTicks(200);
+						for(Entity entity : p.getNearbyEntities(r + 2, r + 2, r + 2)) {
+							if(entity.getType().isAlive() && !entity.equals(p.getShooter())) {
+								((LivingEntity) entity).setFireTicks(200);
 							}
 						}
 						p.teleport(new Location(w,loc.getX(),loc.getY()-1000,loc.getZ()));
@@ -92,12 +92,12 @@ public class ProjectileEvents implements Listener{
 						
 						int frozen = 0;
 						
-						for(Entity et : p.getNearbyEntities(r, r, r)) {
-							if(et instanceof Monster && !et.isInWater()) {
+						for(Entity entity : p.getNearbyEntities(r, r, r)) {
+							if(entity instanceof Monster && !entity.isInWater()) {
 								
-								((Monster) et).addPotionEffect(potioneffect_freeze);
-								BoundingBox bb = et.getBoundingBox();
-								Location l = et.getLocation();
+								((Monster) entity).addPotionEffect(potioneffect_freeze);
+								BoundingBox bb = entity.getBoundingBox();
+								Location l = entity.getLocation();
 								for(int x=l.getBlockX() - 1; x <= bb.getMaxX() + 0.5; x++) {
 									for(int z=l.getBlockZ() - 1; z <= bb.getMaxZ() + 0.5; z++) {
 										for(int y=l.getBlockY() - 1; y <= bb.getMaxY() + 0.5; y++) {
@@ -149,10 +149,10 @@ public class ProjectileEvents implements Listener{
 					case "waterbomb":
 						r = 6;
 						boolean fire = false;
-						for(Entity et : p.getNearbyEntities(r+2, r+2, r+2)) {
-							if(et.getFireTicks()>0) {
+						for(Entity entity : p.getNearbyEntities(r+2, r+2, r+2)) {
+							if(entity.getFireTicks()>0) {
 								fire=true;
-								et.setFireTicks(0);
+								entity.setFireTicks(0);
 							}
 						}
 						p.teleport(new Location(w,loc.getX(),loc.getY()-1000,loc.getZ()));

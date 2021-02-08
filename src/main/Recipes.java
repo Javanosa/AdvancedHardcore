@@ -14,9 +14,32 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 
 public class Recipes {
-	public static ItemStack[] recipe_items = {};
+	public static ItemStack[] recipe_items = register_recipes();
 	
 	public static ItemStack[] register_recipes() {
+		
+		ItemStack gate = new ItemStack(Material.DISPENSER);
+		ItemMeta meta8 = gate.getItemMeta();
+		meta8.setDisplayName("§r§lTorantrieb");
+		//meta8.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+		//meta8.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		/*ArrayList<String> lore8 = new ArrayList<String>();
+		lore8.add("§7Tor welches Blöcke verschieben kann");
+		meta8.setLore(lore8);*/
+		//meta8.setLocalizedName("§r§lGate");
+		
+		gate.setItemMeta(meta8);
+		
+		NamespacedKey gate_key = new NamespacedKey(Main.main, "gate");
+		ShapedRecipe gate_recipe = new ShapedRecipe(gate_key, gate);
+		gate_recipe.shape("ABA","DAD","CCC");
+		gate_recipe.setIngredient('A', Material.IRON_INGOT);
+		gate_recipe.setIngredient('B', Material.PISTON);
+		gate_recipe.setIngredient('C', Material.STONE);
+		gate_recipe.setIngredient('D', Material.REDSTONE);
+		Bukkit.addRecipe(gate_recipe);
+		
+		
 		ItemStack firebomb = new ItemStack(Material.SPLASH_POTION);
 		PotionMeta meta = (PotionMeta) firebomb.getItemMeta();
 		meta.setDisplayName("§c§lMolotowcocktail");
@@ -193,7 +216,7 @@ public class Recipes {
 		Bukkit.addRecipe(spiderbomb_recipe);
 		
 		
-		ItemStack[] items = {firebomb, spiderbomb, mobtrap, waterbomb, implosion, explosion, icebomb};
+		ItemStack[] items = {gate, firebomb, spiderbomb, mobtrap, waterbomb, implosion, explosion, icebomb};
 		
 		return items;
 		
